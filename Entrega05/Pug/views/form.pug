@@ -1,0 +1,21 @@
+h2(style='color:rgb(0, 0, 0);') Form
+nav(aria-label='breadcrumb')
+  ol.breadcrumb
+    li.breadcrumb-item.active(aria-current='page') Form
+    li.breadcrumb-item
+      a(href='/products') Products
+br
+form(action='/' method='post')
+  .form-group
+    label(for='title')
+      b title
+    input#title.form-control(type='text' name='title')
+  .form-group
+    label(for='price')
+      b price
+    input#price.form-control(type='number' name='price')
+  .form-group
+    label(for='thumbnail')
+      b thumbnail
+    input#thumbnail.form-control(type='text' name='thumbnail')
+  button.btn.btn-success.mt-3.mb-5 Submit
