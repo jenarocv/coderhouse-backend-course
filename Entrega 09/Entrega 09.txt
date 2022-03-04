@@ -1,0 +1,183 @@
+// Agregar 10 documentos a la colección 'productos'
+db.products.insert([
+  {
+    title: "Soup",
+    price: 120,
+    thumbnail:
+      "https://cdn3.iconfinder.com/data/icons/food-beverage-filled-line/64/soup-bowl-hot-food-512.png",
+  },
+  {
+    title: "Ice-cream",
+    price: 580,
+    thumbnail:
+      "https://cdn3.iconfinder.com/data/icons/food-beverage-filled-line/64/ice-cream-tasty-popsicle-512.png",
+  },
+  {
+    title: "Rice",
+    price: 900,
+    thumbnail:
+      "https://cdn3.iconfinder.com/data/icons/food-beverage-filled-line/64/rice-bowl-asian-food-512.png",
+  },
+  {
+    title: "Chicken",
+    price: 1280,
+    thumbnail:
+      "https://cdn3.iconfinder.com/data/icons/food-beverage-filled-line/64/turkey-chicken-plate-food-512.png",
+  },
+  {
+    title: "Taco",
+    price: 1700,
+    thumbnail:
+      "https://cdn3.iconfinder.com/data/icons/food-beverage-filled-line/64/taco-warp-tortilla-food-512.png",
+  },
+  {
+    title: "Cheese",
+    price: 2300,
+    thumbnail:
+      "https://cdn3.iconfinder.com/data/icons/food-beverage-filled-line/64/cheese-cow-swiss-food-512.png",
+  },
+  {
+    title: "Lobster",
+    price: 2860,
+    thumbnail:
+      "https://cdn3.iconfinder.com/data/icons/food-beverage-filled-line/64/lobster-shellfish-food-seafood-512.png",
+  },
+  {
+    title: "Pizza",
+    price: 3350,
+    thumbnail:
+      "https://cdn3.iconfinder.com/data/icons/food-beverage-filled-line/64/pizza-slice-tasty-food-512.png",
+  },
+  {
+    title: "Milk",
+    price: 4320,
+    thumbnail:
+      "https://cdn3.iconfinder.com/data/icons/food-beverage-filled-line/64/milk-fresh-cream-box-512.png",
+  },
+  {
+    title: "Flan",
+    price: 4990,
+    thumbnail:
+      "https://cdn3.iconfinder.com/data/icons/food-beverage-filled-line/64/pudding-jelly-gelatine-food-512.png",
+  },
+]);
+
+// Agregar 10 documentos a la colección 'mensajes'
+db.messages.insert([
+  {
+    name: "test01@testemail.com",
+    message: "Hey how are you?",
+    date: "2022-02-27 00:44:00",
+  },
+  {
+    name: "test02@testemail.com",
+    message: "I'm fine. And you?",
+    date: "2022-02-27 00:45:00",
+  },
+  {
+    name: "test01@testemail.com",
+    message: "Thanks for asking. I'm fine too. How's your dog?",
+    date: "2022-02-27 00:46:00",
+  },
+  {
+    name: "test02@testemail.com",
+    message: "My dog is OK. How's your cat?",
+    date: "2022-02-27 00:47:00",
+  },
+  {
+    name: "test01@testemail.com",
+    message: "My cat is OK. How's your iguana?",
+    date: "2022-02-27 00:48:00",
+  },
+  {
+    name: "test02@testemail.com",
+    message: "My iguana is OK. How's your racoon?",
+    date: "2022-02-27 00:49:00",
+  },
+  {
+    name: "test01@testemail.com",
+    message: "My racoon is OK. How's your fish?",
+    date: "2022-02-27 00:50:00",
+  },
+  {
+    name: "test02@testemail.com",
+    message: "My fish is OK. How's your turtle?",
+    date: "2022-02-27 00:51:00",
+  },
+  {
+    name: "test01@testemail.com",
+    message: "My turtle is OK. How's your parrot?",
+    date: "2022-02-27 00:52:00",
+  },
+  {
+    name: "test02@testemail.com",
+    message: "My parrot is dead :(",
+    date: "2022-02-27 00:53:00",
+  },
+  {
+    name: "test01@testemail.com",
+    message: "Oh :(",
+    date: "2022-02-27 00:54:00",
+  },
+]);
+
+// Listar todos los documentos en cada colección
+db.products.find();
+db.messages.find();
+
+// Mostrar la cantidad de documentos almacenados en cada una de ellas
+db.products.countDocuments();
+db.messages.countDocuments();
+
+// Agregar un producto más en la colección de productos
+db.products.insertOne({
+  title: "Pretzel",
+  price: 5500,
+  thumbnail:
+    "https://cdn3.iconfinder.com/data/icons/food-beverage-filled-line/64/pretzel-cake-bakery-food-512.png",
+});
+
+// Listar productos con precio menor a 1000 pesos
+db.products.find({ price: { $lt: 1000 } });
+
+// Listar productos con precio entre los 1000 a 3000 pesos
+db.products.find({ price: { $gt: 1000, $lt: 3000 } });
+
+// Listar productos con precio mayor a 3000 pesos
+db.products.find({ price: { $gt: 3000 } });
+
+// Obtener nombre del tercer producto mas barato
+db.products.find({}, { title: 1 }).sort({ price: 1 }).skip(2).limit(1);
+
+// Agregar campo 'stock' a todos los productos con un valor de 100
+db.products.updateMany(
+  {},
+  { $set: { stock: 100 } },
+  { upsert: false, multi: true }
+);
+
+//Cambiar el stock a cero de los productos con precios mayores a 4000 pesos
+db.products.updateMany(
+  { price: { $gt: 4000 } },
+  { $set: { stock: 0 } },
+  { upsert: false, multi: true }
+);
+
+// Borrar los productos con precio menor a 1000 pesos
+db.products.deleteMany({ price: { $lt: 1000 } });
+
+// Crear usuario con rol de lectura en base de datos 'ecommerce'
+db.createUser({
+  user: "pepe",
+  pwd: "asd456",
+  roles: [
+    {
+      role: "read",
+      db: "ecommerce",
+    },
+  ],
+});
+
+// Pruebas
+db.products.find();
+db.products.insertOne({ title: "Test product" });
