@@ -21,7 +21,7 @@ const getProduct = asyncHandler(async (req, res) => {
       new ErrorResponse(`Product not found with id of ${req.params.id}`, 404)
     );
   }
-  res.status(200).json(products);
+  res.status(200).json(product);
 });
 
 // @desc    Set product
@@ -34,7 +34,7 @@ const setProduct = asyncHandler(async (req, res) => {
   }
 
   const product = await Product.create({
-    name: req.body.text,
+    name: req.body.name,
     description: req.body.description,
     code: req.body.code,
     price: req.body.price,
@@ -43,4 +43,46 @@ const setProduct = asyncHandler(async (req, res) => {
 
   res.status(200).json(product);
 });
-module.exports = Product;
+
+// @desc    Update product
+// @route   PUT /api/products/:id
+// @access  Private
+const updateProduct = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id);
+
+  if (!product) {
+    res.status(400);
+    throw new Error("Product not found");
+  }
+
+  const updatedProduct = await Product.updateOne(
+    { _id: req.params.id },
+    { product, ...req.body }
+  );
+
+  res.status(200).json(updatedProduct);
+});
+
+// @desc    Delete product
+// @route   DELETE /api/products/:id
+// @access  Private
+const deleteProduct = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id);
+
+  if (!product) {
+    res.status(400);
+    throw new Error("Product not found");
+  }
+
+  await product.remove();
+
+  res.status(200).json({ id: req.params.id });
+});
+
+module.exports = {
+  getProducts,
+  getProduct,
+  setProduct,
+  updateProduct,
+  deleteProduct,
+};

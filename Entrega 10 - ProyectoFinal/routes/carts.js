@@ -1,47 +1,24 @@
-const { Router } = require("express");
-const Cart = require("../controllers/Cart");
+const express = require("express");
+const router = express.Router();
 
-const cartsRouter = Router();
+const {
+  getCarts,
+  setCart,
+  deleteCart,
+  getProducts,
+  setProduct,
+  deleteProduct,
+} = require("../controllers/Cart");
 
-const carts = new Cart("carts.txt");
+router.route("/").get(getCarts).post(setCart);
 
-// Crea un carrito y devuelve su id
-cartsRouter.post("/", async (req, res) => {
-    res.json(await carts.save());
-});
+router.route("/:id").delete(deleteCart).get(getProducts);
 
-//Vacía un carrito y lo elimina.
-cartsRouter.delete("/:id", async (req, res) => {
-    const { id } = req.params;
-    res.json(await carts.deleteById(id));
-});
+router.route("/:id/products");
 
-// Listar todos los productos guardados en el carrito
-cartsRouter.get("/:id/products", async (req, res) => {
-    const { id } = req.params;
-    res.json(await carts.getProductsById(id));
-});
+router
+  .route("/:cartId/products/:productId")
+  .post(setProduct)
+  .delete(deleteProduct);
 
-// Incorporar productos al carrito por su id de producto
-cartsRouter.post("/:id/products", async (req, res) => {
-    const { id } = req.params;
-    res.json(await carts.saveProduct(id, req.body));
-});
-
-//Eliminar un producto del carrito por su id de carrito y de producto
-cartsRouter.delete("/:cartId/products/:productId", async (req, res) => {
-    const { cartId, productId } = req.params;
-    res.json(await carts.deleteProductByIdFromCart(cartId, productId));
-});
-
-cartsRouter.get("/", async (req, res) => {
-    console.log(carts);
-    res.json(await carts.getAll());
-});
-
-cartsRouter.put("/:id", async (req, res) => {
-    const { id } = req.params;
-    res.json(await carts.update(id, req.body));
-});
-
-exports.cartsRouter = cartsRouter;
+module.exports = router;

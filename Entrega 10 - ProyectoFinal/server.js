@@ -1,13 +1,9 @@
 const express = require("express");
-const dotenv = require("dotenv").config();
+const dotenv = require("dotenv");
 const cors = require("cors");
 
-const { productsRouter } = require("./routes/products");
-const { cartsRouter } = require("./routes/carts");
 const connectDB = require("./config/db");
 
-/* ------------------------------------------------------ */
-/* Load env vars */
 dotenv.config({ path: "./config/config.env" });
 
 /* ------------------------------------------------------ */
@@ -20,17 +16,13 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
-
-/* ------------------------------------------------------ */
-/* Template engine */
-// app.set("views", "public/views");
-// app.set("view engine", "ejs");
+app.use(cors());
 
 /* ------------------------------------------------------ */
 /* Routes */
 
-app.use("/api/products", productsRouter);
-app.use("/api/carts", cartsRouter);
+app.use("/api/products", require("./routes/products"));
+app.use("/api/carts", require("./routes/carts"));
 
 app.use(function (req, res, next) {
   const error = {

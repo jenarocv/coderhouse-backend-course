@@ -1,9 +1,18 @@
 const mongoose = require("mongoose");
 
-const CartSchema = new mongoose.Schema({
-  createdAt: {
-    type: Date,
-    default: Date.now,
+const CartSchema = new mongoose.Schema(
+  {
+    products: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
+        },
+      ],
+      default: [],
+    },
   },
-  products: [],
-});
+  { timestamps: true }
+);
+
+module.exports = mongoose.model("Cart", CartSchema);

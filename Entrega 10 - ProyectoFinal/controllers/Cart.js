@@ -1,160 +1,112 @@
 const asyncHandler = require("express-async-handler");
+const Cart = require("../models/Cart");
+const Product = require("../models/Product");
 
-getAll = async () => {
-  try {
-    const content = await fs.promises.readFile(this.route, "utf-8");
-    return JSON.parse(content);
-  } catch (error) {
-    await fs.promises.writeFile(this.route, JSON.stringify([], null, 2));
-    const content = await fs.promises.readFile(this.route, "utf-8");
-    return JSON.parse(content);
-  }
-};
+// @desc    Get carts
+// @route   GET /api/carts
+// @access  Private
+const getCarts = asyncHandler(async (req, res) => {
+  const carts = await Cart.find({});
 
-// getById = async (id) => {
-//     try {
-//         const products = await this.getAll();
-//         const product = products.find((p) => p.id === parseInt(id));
-//         return (
-//             product || { error: `Product with id: ${id} does not exists` }
-//         );
-//     } catch (error) {
-//         return error;
-//     }
-// };
+  res.status(200).json(carts);
+});
 
-getProductsById = async (id) => {
-  try {
-    const carts = await this.getAll();
-    const cart = carts.findIndex((c) => c.id === parseInt(id));
-
-    if (cart > -1) {
-      const products = carts[cart].products;
-
-      return products.length === 0
-        ? `Cart with id: ${id} does not have any products`
-        : products;
-    } else {
-      return { error: `Cart with id: ${id} does not exists` };
-    }
-  } catch (error) {
-    return error;
-  }
-};
-
-// getRandom = async () => {
-//     const products = await this.getAll();
-//     const random = products[Math.floor(Math.random() * products.length)];
-//     return random;
-// };
-
-save = async () => {
-  const cart = {
-    timestamp: new Date().toISOString().replace(/T/, " ").replace(/\..+/, ""),
+// @desc    Set cart
+// @route   POST /api/carts
+// @access  Private
+const setCart = asyncHandler(async (req, res) => {
+  const carts = await Cart.create({
     products: [],
-  };
+  });
 
-  const carts = await this.getAll();
+  res.status(200).json(carts);
+});
 
-  if (carts.length === 0) {
-    cart.id = 1;
-  } else {
-    const lastElement = carts[carts.length - 1];
-    const lastId = lastElement.id + 1;
-    cart.id = lastId;
+// @desc    Delete cart
+// @route   DELETE /api/carts/:id
+// @access  Private
+const deleteCart = asyncHandler(async (req, res) => {
+  const cart = await Cart.findById(req.params.id);
+
+  if (!cart) {
+    res.status(400);
+    throw new Error("Cart not found");
   }
 
-  carts.push(cart);
+  await cart.remove();
 
-  try {
-    await fs.promises.writeFile(this.route, JSON.stringify(carts, null, 2));
-    return cart;
-  } catch (error) {}
-};
+  res.status(200).json({ id: req.params.id });
+});
 
-// deleteAll = async () => {
-//     try {
-//         await fs.promises.writeFile(
-//             this.route,
-//             JSON.stringify([], null, 2)
-//         );
-//     } catch (error) {}
-// };
+// @desc    Get products on a cart
+// @route   GET /:id/products
+// @access  Private
+const getProducts = asyncHandler(async (req, res) => {
+  const cart = await Cart.findById(req.params.id);
 
-deleteById = async (id) => {
-  const carts = await this.getAll();
-  const elementToRemove = carts.findIndex((p) => p.id === parseInt(id));
-
-  if (elementToRemove > -1) {
-    carts.splice(elementToRemove, 1);
-
-    try {
-      await fs.promises.writeFile(this.route, JSON.stringify(carts, null, 2));
-    } catch (error) {}
-    return `Cart with id: ${id} has been deleted`;
-  } else {
-    return { error: `Cart with id: ${id} does not exists` };
+  if (!cart) {
+    res.status(400);
+    throw new Error(`Cart not found with id of ${req.params.id}`);
   }
-};
 
-deleteProductByIdFromCart = async (cartId, productId) => {
-  const carts = await this.getAll();
-  const cart = carts.findIndex((c) => c.id === parseInt(cartId));
+  res.status(200).json(cart.products);
+});
 
-  if (cart > -1) {
-    const products = carts[cart].products;
+// @desc    Set product on a cart
+// @route   POST /:cartId/products/:productId
+// @access  Private
+const setProduct = asyncHandler(async (req, res) => {
+  const cart = await Cart.findById(req.params.cartId);
 
-    const product = products.findIndex((p) => p.id === parseInt(productId));
-
-    if (product > -1) {
-      carts[cart].products.splice(product, 1);
-
-      try {
-        await fs.promises.writeFile(this.route, JSON.stringify(carts, null, 2));
-      } catch (error) {}
-      return `Product with id: ${productId} has been deleted`;
-    } else {
-      return {
-        error: `Product with id: ${productId} does not exists`,
-      };
-    }
-  } else {
-    return { error: `Cart with id: ${cartId} does not exists` };
+  if (!cart) {
+    res.status(400);
+    throw new Error("Cart not found");
   }
-};
 
-saveProduct = async (id, product) => {
-  const carts = await this.getAll();
-  const cart = carts.findIndex((c) => c.id === parseInt(id));
+  const product = await Product.findById(req.params.productId);
 
-  if (cart > -1) {
-    const products = carts[cart].products;
-
-    if (products.length === 0) {
-      product.id = 1;
-    } else {
-      const lastElement = products[products.length - 1];
-      const lastId = lastElement.id + 1;
-      product.id = lastId;
-    }
-
-    product.timestamp = new Date()
-      .toISOString()
-      .replace(/T/, " ")
-      .replace(/\..+/, "");
-
-    products.push(product);
-
-    carts[cart].products = products;
-
-    try {
-      await fs.promises.writeFile(this.route, JSON.stringify(carts, null, 2));
-    } catch (error) {}
-
-    return carts[cart];
-  } else {
-    return { error: `Cart with id: ${id} does not exists` };
+  if (!product) {
+    res.status(400);
+    throw new Error("Product not found");
   }
-};
 
-module.exports = Cart;
+  const cartWithNewProduct = await Cart.updateOne(
+    { _id: req.params.cartId },
+    { $push: { products: req.params.productId } }
+  );
+  res.status(200).json(cartWithNewProduct);
+});
+
+// @desc    Set product on a cart
+// @route   POST /:cartId/products/:productId
+// @access  Private
+const deleteProduct = asyncHandler(async (req, res) => {
+  const cart = await Cart.findById(req.params.cartId);
+
+  if (!cart) {
+    res.status(400);
+    throw new Error("Cart not found");
+  }
+
+  const product = await Product.findById(req.params.productId);
+
+  if (!product) {
+    res.status(400);
+    throw new Error("Product not found");
+  }
+
+  const cartWithDeletedProduct = await Cart.updateOne(
+    { _id: req.params.cartId },
+    { $pull: { products: req.params.productId } }
+  );
+  res.status(200).json(cartWithDeletedProduct);
+});
+
+module.exports = {
+  getCarts,
+  setCart,
+  deleteCart,
+  getProducts,
+  setProduct,
+  deleteProduct,
+};
