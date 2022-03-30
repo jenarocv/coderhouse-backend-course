@@ -72,7 +72,7 @@ const setProduct = asyncHandler(async (req, res) => {
   res.status(200).json(cartWithNewProduct);
 });
 
-// @desc    Set product on a cart
+// @desc    Delete product from a cart
 // @route   POST /:cartId/products/:productId
 const deleteProduct = asyncHandler(async (req, res) => {
   const cart = await Cart.findById(req.params.cartId);
