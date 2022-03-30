@@ -1,10 +1,9 @@
 const asyncHandler = require("express-async-handler");
-const Cart = require("../models/Cart");
-const Product = require("../models/Product");
+const Cart = require("../../models/cart");
+const Product = require("../../models/product");
 
 // @desc    Get carts
 // @route   GET /api/carts
-// @access  Private
 const getCarts = asyncHandler(async (req, res) => {
   const carts = await Cart.find({});
 
@@ -13,7 +12,6 @@ const getCarts = asyncHandler(async (req, res) => {
 
 // @desc    Set cart
 // @route   POST /api/carts
-// @access  Private
 const setCart = asyncHandler(async (req, res) => {
   const carts = await Cart.create({
     products: [],
@@ -24,7 +22,6 @@ const setCart = asyncHandler(async (req, res) => {
 
 // @desc    Delete cart
 // @route   DELETE /api/carts/:id
-// @access  Private
 const deleteCart = asyncHandler(async (req, res) => {
   const cart = await Cart.findById(req.params.id);
 
@@ -40,7 +37,6 @@ const deleteCart = asyncHandler(async (req, res) => {
 
 // @desc    Get products on a cart
 // @route   GET /:id/products
-// @access  Private
 const getProducts = asyncHandler(async (req, res) => {
   const cart = await Cart.findById(req.params.id);
 
@@ -54,7 +50,6 @@ const getProducts = asyncHandler(async (req, res) => {
 
 // @desc    Set product on a cart
 // @route   POST /:cartId/products/:productId
-// @access  Private
 const setProduct = asyncHandler(async (req, res) => {
   const cart = await Cart.findById(req.params.cartId);
 
@@ -79,7 +74,6 @@ const setProduct = asyncHandler(async (req, res) => {
 
 // @desc    Set product on a cart
 // @route   POST /:cartId/products/:productId
-// @access  Private
 const deleteProduct = asyncHandler(async (req, res) => {
   const cart = await Cart.findById(req.params.cartId);
 

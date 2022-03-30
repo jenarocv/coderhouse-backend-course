@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const { protect } = require("../middleware/authMiddleware");
+const { protect } = require("../../middleware/authMiddleware");
 const {
   getProducts,
   getProduct,
   setProduct,
   updateProduct,
   deleteProduct,
-} = require("../controllers/Product");
+} = require("../../controllers/mongo/product");
 
 router.route("/").get(getProducts).post(protect, setProduct);
 router

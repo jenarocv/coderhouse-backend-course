@@ -1,9 +1,8 @@
 const asyncHandler = require("express-async-handler");
-const Product = require("../models/Product");
+const Product = require("../../models/product");
 
 // @desc    Get products
 // @route   GET /api/products
-// @access  Private
 const getProducts = asyncHandler(async (req, res) => {
   const products = await Product.find({});
 
@@ -12,7 +11,6 @@ const getProducts = asyncHandler(async (req, res) => {
 
 // @desc    Get single product
 // @route   GET /api/products/:id
-// @access  Private
 const getProduct = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
 
@@ -26,7 +24,6 @@ const getProduct = asyncHandler(async (req, res) => {
 
 // @desc    Set product
 // @route   POST /api/products
-// @access  Private
 const setProduct = asyncHandler(async (req, res) => {
   if (!req.body.name) {
     res.status(400);
@@ -46,7 +43,6 @@ const setProduct = asyncHandler(async (req, res) => {
 
 // @desc    Update product
 // @route   PUT /api/products/:id
-// @access  Private
 const updateProduct = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
 
@@ -65,7 +61,6 @@ const updateProduct = asyncHandler(async (req, res) => {
 
 // @desc    Delete product
 // @route   DELETE /api/products/:id
-// @access  Private
 const deleteProduct = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
 

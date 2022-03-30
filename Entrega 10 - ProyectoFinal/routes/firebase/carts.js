@@ -8,7 +8,7 @@ const {
   getProducts,
   setProduct,
   deleteProduct,
-} = require("../controllers/Cart");
+} = require("../../controllers/firebase/cart");
 
 router.route("/").get(getCarts).post(setCart);
 

@@ -1,14 +1,17 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const errorHandler = require("./middleware/errorHandler");
 
-const connectDB = require("./config/db");
+const connectMongo = require("./config/mongo");
+const connectFirebase = require("./config/firebase");
 
 dotenv.config({ path: "./config/config.env" });
 
 /* ------------------------------------------------------ */
 /* Connect to database */
-connectDB();
+connectMongo();
+connectFirebase();
 
 const app = express();
 
@@ -21,16 +24,13 @@ app.use(cors());
 /* ------------------------------------------------------ */
 /* Routes */
 
-app.use("/api/products", require("./routes/products"));
-app.use("/api/carts", require("./routes/carts"));
+app.use("/api/mongo/products", require("./routes/mongo/products"));
+app.use("/api/mongo/carts", require("./routes/mongo/carts"));
 
-app.use(function (req, res, next) {
-  const error = {
-    error: -2,
-    description: `Method: ${req.method}, Route: ${req.originalUrl} not implemented.`,
-  };
-  res.json(error);
-});
+app.use("/api/firebase/products", require("./routes/firebase/products"));
+app.use("/api/firebase/carts", require("./routes/firebase/carts"));
+
+app.use(errorHandler);
 
 /* ------------------------------------------------------ */
 /* Server Listen */
